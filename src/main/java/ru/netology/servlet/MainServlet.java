@@ -1,8 +1,8 @@
 package ru.netology.servlet;
 
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import ru.netology.controller.PostController;
-import ru.netology.repository.PostRepository;
-import ru.netology.service.PostService;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,9 +16,14 @@ public class MainServlet extends HttpServlet {
 
     @Override
     public void init() {
-        final var repository = new PostRepository();
-        final var service = new PostService(repository);
-        controller = new PostController(service);
+
+        final var factory = new DefaultListableBeanFactory();
+        final var reader = new XmlBeanDefinitionReader(factory);
+        reader.loadBeanDefinitions("beans.xml");
+
+        // получаем по имени бина
+        controller = (PostController) factory.getBean("postController");
+
     }
 
     @Override
